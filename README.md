@@ -1,6 +1,6 @@
-# =================================================
-#                   Yelp Camp
-# =================================================
+# ===========================================
+#                Yelp Camp
+# ===========================================
 
 ## Summary:
 The objective of this app is to help users find their next campground.
@@ -10,4 +10,4 @@ The objective of this app is to help users find their next campground.
 * Users can add new campgrounds to the database
 
 ## Built with:
-Express, Bootstrap
+Express (routes), MongoDB (database), Mongoose, Bootstrap (styling)
