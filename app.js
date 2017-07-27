@@ -18,6 +18,9 @@ app.get('/', function(req, res){
     res.render('landing')
 })
 
+
+//////////////  CAMPGROUND ROUTES  \\\\\\\\\\\\\\\
+
 // INDEX - show all campgrounds
 app.get('/campgrounds', function(req, res){
     // Get all campgrounds from DB
@@ -25,14 +28,14 @@ app.get('/campgrounds', function(req, res){
         if(err){
             console.log(err)
         } else{
-            res.render('index', {campgrounds: allCampgrounds})
+            res.render('campgrounds/index', {campgrounds: allCampgrounds})
         }
     })
 })
 
 // NEW - show form to create new campgrounds
 app.get('/campgrounds/new', function(req, res){
-    res.render('new.ejs')
+    res.render('campgrounds/new.ejs')
 })
 
 // CREATE - add new campground to DB
@@ -56,16 +59,31 @@ app.post('/campgrounds', function(req, res){
 // SHOW - more details of a single campground
 app.get('/campgrounds/:id', function(req, res){
     // find campground with provided ID
-    Campground.findById(req.params.id).populate('comments').exec (function(err, foundCampground){
+    Campground.findById(req.params.id).populate('comments').exec(function(err, foundCampground){
         if(err){
             console.log(err)
         } else {
             //render show template with that campground
-            res.render('show', {campground: foundCampground})
+            res.render('campgrounds/show', {campground: foundCampground})
         }
     })
 
 })
+
+
+//////////////  COMMENTS ROUTES  \\\\\\\\\\\\\\\
+
+// NEW - show form to create new comments
+app.get('/campgrounds/:id/comments/new', function(req, res){
+    Campground.findById(req.params.id, function(err, campground){
+        if(err){
+            console.log(err)
+        } else {
+            res.render('comments/new', {campground: campground})
+        }
+    })
+})
+
 
 app.get('*', function(req, res){
     res.send('Oops, pages does not exist')
