@@ -1,69 +1,47 @@
+// APP SETUP
 const   express     = require('express'),
         app         = express(),
         bodyParser  = require('body-parser'),
         mongoose    = require('mongoose')
 
+const   Campground  = require('./models/campground'),
+        seedDB      = require('./seeds')
+
 mongoose.connect('mongodb://localhost/yelp_camp', {useMongoClient: true})
 app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
 
-// SCHEMA SETUP
-let campgroundSchema = new mongoose.Schema({
-    name: String,
-    image: String
-})
+seedDB()
 
-let Campground = mongoose.model('Campground', campgroundSchema)
-
-/*
-Campground.create({
-        name: "Salmon Creek", image: "https://images.unsplash.com/photo-1492648272180-61e45a8d98a7?dpr=1&auto=format&fit=crop&w=1199&h=799&q=80&cs=tinysrgb&crop="
-    }, function(err, campground){
-        if(err){
-            console.log(err)
-        } else {
-            console.log('New campground created: ')
-            console.log(campground)
-        }
-})
-
-let campgrounds = [
-    {name: "Salmon Creek", image: "https://images.unsplash.com/photo-1492648272180-61e45a8d98a7?dpr=1&auto=format&fit=crop&w=1199&h=799&q=80&cs=tinysrgb&crop="},
-    {name: "Baker's Cove", image: "https://images.unsplash.com/photo-1414016642750-7fdd78dc33d9?dpr=1&auto=format&fit=crop&w=1199&h=801&q=80&cs=tinysrgb&crop="},
-    {name: "Salmon Creek", image: "https://images.unsplash.com/photo-1492648272180-61e45a8d98a7?dpr=1&auto=format&fit=crop&w=1199&h=799&q=80&cs=tinysrgb&crop="},
-    {name: "Baker's Cove", image: "https://images.unsplash.com/photo-1414016642750-7fdd78dc33d9?dpr=1&auto=format&fit=crop&w=1199&h=801&q=80&cs=tinysrgb&crop="},
-    {name: "Salmon Creek", image: "https://images.unsplash.com/photo-1492648272180-61e45a8d98a7?dpr=1&auto=format&fit=crop&w=1199&h=799&q=80&cs=tinysrgb&crop="},
-    {name: "Baker's Cove", image: "https://images.unsplash.com/photo-1414016642750-7fdd78dc33d9?dpr=1&auto=format&fit=crop&w=1199&h=801&q=80&cs=tinysrgb&crop="},
-    {name: "Salmon Creek", image: "https://images.unsplash.com/photo-1492648272180-61e45a8d98a7?dpr=1&auto=format&fit=crop&w=1199&h=799&q=80&cs=tinysrgb&crop="},
-    {name: "Baker's Cove", image: "https://images.unsplash.com/photo-1414016642750-7fdd78dc33d9?dpr=1&auto=format&fit=crop&w=1199&h=801&q=80&cs=tinysrgb&crop="},
-    {name: "King's Landing", image: "https://images.unsplash.com/photo-1471115853179-bb1d604434e0?dpr=1&auto=format&fit=crop&w=1199&h=911&q=80&cs=tinysrgb&crop="}
-]
-*/
 
 app.get('/', function(req, res){
     res.render('landing')
 })
 
+// INDEX - show all campgrounds
 app.get('/campgrounds', function(req, res){
     // Get all campgrounds from DB
     Campground.find({}, function(err, allCampgrounds){
         if(err){
             console.log(err)
         } else{
-            res.render('campgrounds', {campgrounds: allCampgrounds})
+            res.render('index', {campgrounds: allCampgrounds})
         }
     })
 })
 
+// NEW - show form to create new campgrounds
 app.get('/campgrounds/new', function(req, res){
     res.render('new.ejs')
 })
 
+// CREATE - add new campground to DB
 app.post('/campgrounds', function(req, res){
     // collect info from form and add to database
     let name = req.body.name
     let image = req.body.image
-    let newCampground = {name: name, image: image}
+    let desc = req.body.description
+    let newCampground = {name: name, image: image, description: desc}
     // Create new campground and save to DB
     Campground.create(newCampground, function(err, newlyCreated){
         if(err){
@@ -73,6 +51,20 @@ app.post('/campgrounds', function(req, res){
             res.redirect('/campgrounds')
         }
     })
+})
+
+// SHOW - more details of a single campground
+app.get('/campgrounds/:id', function(req, res){
+    // find campground with provided ID
+    Campground.findById(req.params.id).populate('comments').exec (function(err, foundCampground){
+        if(err){
+            console.log(err)
+        } else {
+            //render show template with that campground
+            res.render('show', {campground: foundCampground})
+        }
+    })
+
 })
 
 app.get('*', function(req, res){
