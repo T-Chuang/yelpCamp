@@ -33,32 +33,31 @@ function seedDB(){
         }
     })
 
-    // Add seed campgrounds to DB
-    campgroundData.forEach(function(seed){
-        Campground.create(seed, function(err, campground){
-            if(err){
-                console.log(err)
-            } else {
-                console.log('Added a campground.')
-                // Add seed comments
-                Comment.create(
-                    {
-                        text: 'Nature is great, but wish there was internet',
-                        author: 'modern human'
-                    }, function(err, comment){
-                        if(err){
-                            console.log(err)
-                        } else {
-                            campground.comments.push(comment)
-                            campground.save()
-                            console.log('Created new comment')
-                        }
-                    }
-                )
-            }
-        })
-    })
-
+//     // Add seed campgrounds to DB
+//     campgroundData.forEach(function(seed){
+//         Campground.create(seed, function(err, campground){
+//             if(err){
+//                 console.log(err)
+//             } else {
+//                 console.log('Added a campground.')
+//                 // Add seed comments
+//                 Comment.create(
+//                     {
+//                         text: 'Nature is great, but wish there was internet',
+//                         author: 'modern human'
+//                     }, function(err, comment){
+//                         if(err){
+//                             console.log(err)
+//                         } else {
+//                             campground.comments.push(comment)
+//                             campground.save()
+//                             console.log('Created new comment')
+//                         }
+//                     }
+//                 )
+//             }
+//         })
+//     })
 
 }
 
