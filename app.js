@@ -16,7 +16,10 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'))
 
+
+
 seedDB()
+
 
 //////////////  PASSPORT CONFIG  \\\\\\\\\\\\\\\
 app.use(require('express-session')({
@@ -30,12 +33,25 @@ passport.use(new LocalStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
+// Middleware called on every route, creates a local variable to check if logged in user exists
+// res.locals.currentUser needs to be set after the passport config but before routes
+app.use(function(req, res, next){
+    res.locals.currentUser = req.user
+    next()
+})
+
+function isLoggedIn(req, res, next){
+    if(req.isAuthenticated()){
+        return next()
+    }
+    res.redirect('/login')
+}
+
+//////////////  CAMPGROUND ROUTES  \\\\\\\\\\\\\\\
 
 app.get('/', function(req, res){
     res.render('landing')
 })
-
-//////////////  CAMPGROUND ROUTES  \\\\\\\\\\\\\\\
 
 // INDEX - show all campgrounds
 app.get('/campgrounds', function(req, res){
@@ -90,7 +106,7 @@ app.get('/campgrounds/:id', function(req, res){
 //////////////  COMMENTS ROUTES  \\\\\\\\\\\\\\\
 
 // NEW - show form to create new comments
-app.get('/campgrounds/:id/comments/new', function(req, res){
+app.get('/campgrounds/:id/comments/new', isLoggedIn, function(req, res){
     Campground.findById(req.params.id, function(err, campground){
         if(err){
             console.log(err)
@@ -100,7 +116,7 @@ app.get('/campgrounds/:id/comments/new', function(req, res){
     })
 })
 
-app.post('/campgrounds/:id/comments', function(req, res){
+app.post('/campgrounds/:id/comments', isLoggedIn, function(req, res){
     // lookup campground using ID
     Campground.findById(req.params.id, function(err, campground){
         if(err){
@@ -154,6 +170,13 @@ app.post('/login', passport.authenticate('local',
         failuerRedirect: '/login'
     }), function(req, res){
 })
+
+// Log Out
+app.get('/logout', function(req, res){
+    req.logout()
+    res.redirect('/campgrounds')
+})
+
 
 app.get('*', function(req, res){
     res.send('Oops, pages does not exist')
