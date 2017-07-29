@@ -18,17 +18,21 @@ router.get('/', function(req, res){
 })
 
 // NEW - show form to create new campgrounds
-router.get('/new', function(req, res){
+router.get('/new', isLoggedIn, function(req, res){
     res.render('campgrounds/new.ejs')
 })
 
 // CREATE - add new campground to DB
-router.post('/', function(req, res){
+router.post('/', isLoggedIn, function(req, res){
     // collect info from form and add to database
     let name = req.body.name
     let image = req.body.image
     let desc = req.body.description
-    let newCampground = {name: name, image: image, description: desc}
+    let author = {
+        id: req.user._id,
+        username: req.user.username
+    }
+    let newCampground = {name: name, image: image, description: desc, author: author}
     // Create new campground and save to DB
     Campground.create(newCampground, function(err, newlyCreated){
         if(err){
@@ -52,5 +56,14 @@ router.get('/:id', function(req, res){
         }
     })
 })
+
+// Middleware
+function isLoggedIn(req, res, next){
+    if(req.isAuthenticated()){
+        return next()
+    }
+    res.redirect('/login')
+}
+
 
 module.exports = router
