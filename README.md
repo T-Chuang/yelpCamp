@@ -12,4 +12,9 @@ The objective of this plateform is to help users find their next campground.
 * Owner can update their existing campgrounds
 * Owner can delete their campgrounds
 * Users can add comments to a campground
+* Owner can update their existing comments
+* Owner can delete their comments
+
+
+
 
