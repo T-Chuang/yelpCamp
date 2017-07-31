@@ -17,7 +17,7 @@ router.get('/new', isLoggedIn, function(req, res){
     })
 })
 
-// Creates and adds comment to DB
+// CREATE - adds comment to DB
 router.post('/', isLoggedIn, function(req, res){
     // lookup campground using ID
     Campground.findById(req.params.id, function(err, campground){
@@ -44,7 +44,40 @@ router.post('/', isLoggedIn, function(req, res){
     })
 })
 
-// Middleware
+// EDIT - user's comments form
+router.get('/:comment_id/edit', function(req, res){
+    Comment.findById(req.params.comment_id, function(err, foundComment){
+        if(err){
+            res.redirect('back')
+        } else {
+        res.render('comments/edit', {campground_id: req.params.id, comment: foundComment})
+        }
+    })
+})
+
+// UPDATE - user's comment on DB
+router.put('/:comment_id', function(req, res){
+    Comment.findByIdAndUpdate(req.params.comment_id, req.body.comment, function(err, updatedComment){
+        if(err){
+            res,redirect('back')
+        } else {
+            res.redirect('/campgrounds/' + req.params.id)
+        }
+    })
+})
+
+// DESTROY - deletes comment from DB
+router.delete('/:comment_id', function(req, res){
+    Comment.findByIdAndRemove(req.params.comment_id, function(err){
+        if(err){
+            res.redirect('back')
+        } else {
+            res.redirect('/campgrounds/' + req.params.id)
+        }
+    })
+})
+
+//////////////  Middleware  \\\\\\\\\\\\\\\
 function isLoggedIn(req, res, next){
     if(req.isAuthenticated()){
         return next()
