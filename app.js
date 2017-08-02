@@ -3,6 +3,7 @@ const   express         = require('express'),
         app             = express(),
         bodyParser      = require('body-parser'),
         methodOverride  = require('method-override'),
+        flash           =require('connect-flash')
         mongoose        = require('mongoose'),
         passport        = require('passport'),
         LocalStrategy   = require('passport-local')
@@ -21,6 +22,8 @@ app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'))
 app.use(methodOverride('_method'))
+app.use(flash())
+
 
 // seedDB()
 
@@ -36,10 +39,13 @@ passport.use(new LocalStrategy(User.authenticate()))
 passport.serializeUser(User.serializeUser())
 passport.deserializeUser(User.deserializeUser())
 
-// Middleware called on every route, creates a local variable to check if logged in user exists
+
 // res.locals.currentUser needs to be set after the passport config but before routes
 app.use(function(req, res, next){
+    // Middleware called on every route, creates a local variable to check if logged in user exists
     res.locals.currentUser = req.user
+    res.locals.success = req.flash('success')
+    res.locals.error = req.flash('error')
     next()
 })
 

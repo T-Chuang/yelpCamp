@@ -11,7 +11,7 @@ router.get('/', function(req, res){
     // Get all campgrounds from DB
     Campground.find({}, function(err, allCampgrounds){
         if(err){
-            console.log(err)
+            req.flash('error', err.message)
         } else{
             res.render('campgrounds/index', {campgrounds: allCampgrounds})
         }
@@ -37,10 +37,10 @@ router.post('/', middleware.isLoggedIn, function(req, res){
     // Create new campground and save to DB
     Campground.create(newCampground, function(err, newlyCreated){
         if(err){
-            console.log(err)
+            req.flash('error', err.message)
         } else {
-            // redirect to campgrounds page
-            res.redirect('/')
+            req.flash('success','Added new campground. High Five!')
+            res.redirect('campgrounds')
         }
     })
 })
@@ -50,7 +50,7 @@ router.get('/:id', function(req, res){
     // find campground with provided ID
     Campground.findById(req.params.id).populate('comments').exec(function(err, foundCampground){
         if(err){
-            console.log(err)
+            req.flash('error', err.message)
         } else {
             //render show template with that campground
             res.render('campgrounds/show', {campground: foundCampground})
@@ -69,8 +69,10 @@ router.get('/:id/edit', middleware.checkCampgroundOwnership, function(req, res){
 router.put('/:id', middleware.checkCampgroundOwnership, function(req, res){
     Campground.findByIdAndUpdate(req.params.id, req.body.campground, function(err, updatedCampground){
         if(err){
+            req.flash('error', err.message)
             res.redirect('/campgrounds')
         } else {
+            req.flash('success','Campground updated, thanks!')
             res.redirect('/campgrounds/' + req.params.id)
         }
     })
@@ -80,8 +82,10 @@ router.put('/:id', middleware.checkCampgroundOwnership, function(req, res){
 router.delete('/:id', middleware.checkCampgroundOwnership, function(req, res){
     Campground.findByIdAndRemove(req.params.id, function(err){
         if(err){
+            req.flash('error', err.message)
             res.redirect('/campgrounds')
         } else {
+            req.flash('success','Campground deleted')
             res.redirect('/campgrounds')
         }
     })

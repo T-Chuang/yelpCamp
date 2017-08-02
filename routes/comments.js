@@ -11,7 +11,7 @@ const   Campground      = require('../models/campground'),
 router.get('/new', middleware.isLoggedIn, function(req, res){
     Campground.findById(req.params.id, function(err, campground){
         if(err){
-            console.log(err)
+            req.flash('error', err.message)
         } else {
             res.render('comments/new', {campground: campground})
         }
@@ -23,12 +23,12 @@ router.post('/', middleware.isLoggedIn, function(req, res){
     // lookup campground using ID
     Campground.findById(req.params.id, function(err, campground){
         if(err){
-            console.log(err)
+            req.flash('error', err.message)
         } else {
             // create new comment
             Comment.create(req.body.comment, function(err, comment){
                 if(err){
-                    console.log(err)
+                    req.flash('error','Something went wrong.')
                 } else {
                     // add username and id to comment
                     comment.author.id = req.user._id
@@ -38,6 +38,7 @@ router.post('/', middleware.isLoggedIn, function(req, res){
                     campground.comments.push(comment)
                     campground.save()
                     // redirect to campground's show page
+                    req.flash('success','Added your comment, thank you for sharing')
                     res.redirect('/campgrounds/' + campground._id)
                 }
             })
@@ -62,6 +63,7 @@ router.put('/:comment_id', middleware.checkCommentOwnership, function(req, res){
         if(err){
             res,redirect('back')
         } else {
+            req.flash('success','Comment updated, thanks!')
             res.redirect('/campgrounds/' + req.params.id)
         }
     })
@@ -73,6 +75,7 @@ router.delete('/:comment_id', middleware.checkCommentOwnership, function(req, re
         if(err){
             res.redirect('back')
         } else {
+            req.flash('success','Comment deleted')
             res.redirect('/campgrounds/' + req.params.id)
         }
     })

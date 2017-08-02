@@ -7,11 +7,12 @@ The objective of this plateform is to help users find their next campground.
 
 ## Features:
 * Anyone can browser through the database of campgrounds
-* Anyone can sign up, login, and logout (authentication)
+* Anyone can sign up
+* Users can login and logout
 * Users can add new campgrounds to the database
 * Owner can update their existing campgrounds
 * Owner can delete their campgrounds
-* Users can add comments to a campground
+* Users can add comments to any campground
 * Owner can update their existing comments
 * Owner can delete their comments
 
