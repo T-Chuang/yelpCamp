@@ -10,6 +10,7 @@ The objective of this plateform is to help users find their next campground.
 * Anyone can sign up
 * Users can login and logout
 * Users can add new campgrounds to the database
+    * Campground info include: Name, Image URL, Price, Description
 * Owner can update their existing campgrounds
 * Owner can delete their campgrounds
 * Users can add comments to any campground
