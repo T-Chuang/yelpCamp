@@ -17,7 +17,8 @@ const   indexRoutes      = require('./routes/index'),
         campgroundRoutes = require('./routes/campgrounds'),
         commentRoutes    = require('./routes/comments')
 
-mongoose.connect('mongodb://localhost/yelp_camp', {useMongoClient: true})
+// mongoose.connect('mongodb://localhost/yelp_camp', {useMongoClient: true})
+mongoose.connect('mongodb://tchuang:yelpcamptyc@ds125053.mlab.com:25053/yelpcamp-tyc')
 app.use(bodyParser.urlencoded({extended: true}))
 app.set('view engine', 'ejs')
 app.use(express.static(__dirname + '/public'))
@@ -56,7 +57,7 @@ app.use('/campgrounds', campgroundRoutes)
 app.use('/campgrounds/:id/comments', commentRoutes)
 
 app.get('*', function(req, res){
-    res.send('Oops, pages does not exist')
+    res.send('Oops, page does not exist')
 })
 
 app.listen(process.env.PORT || 3000, function(){
