@@ -17,7 +17,7 @@ const   indexRoutes      = require('./routes/index'),
         campgroundRoutes = require('./routes/campgrounds'),
         commentRoutes    = require('./routes/comments')
 
-// Environment Variable DATABASEURL - local: mongodb://localhost/yelpcamp or 
+// Environment Variable DATABASEURL - local: mongodb://localhost/yelp_camp or 
         // HEROKU: mongodb://tchuang:yelpcamptyc@ds125053.mlab.com:25053/yelpcamp-tyc
 mongoose.connect(process.env.DATABASEURL, {useMongoClient: true})
 app.use(bodyParser.urlencoded({extended: true}))
